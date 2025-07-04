@@ -13,13 +13,13 @@ import {
 
 export const collapsibleTestIDs = createTestIDsObject(
   "Collapsible",
-  createParentTestIDObjectKeys("heading", "title", "content")
+  createParentTestIDObjectKeys("heading", "title", "content"),
 );
 
-export function Collapsible({
+export const Collapsible = ({
   children,
   title,
-}: PropsWithChildren & { title: string }) {
+}: PropsWithChildren & { title: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const theme = useColorScheme() ?? "light";
   return (
@@ -28,9 +28,8 @@ export function Collapsible({
         testID={collapsibleTestIDs.heading.testID}
         style={styles.heading}
         onPress={() => {
-          console.log("🚀 -> setIsOpen->");
-          setIsOpen((value) => !value)}
-        }
+          setIsOpen((value) => !value);
+        }}
         activeOpacity={0.8}
       >
         <IconSymbol
@@ -58,7 +57,7 @@ export function Collapsible({
       )}
     </ThemedView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   heading: {
