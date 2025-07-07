@@ -1,9 +1,9 @@
-import { TApplicationState } from "@/app/store/createStore";
-import { createSelector } from "reselect";
+import { TApplicationState } from "@/app/store/configureStore";
 import {
   todosSelectors,
   TTodosState,
 } from "@/app/store/slices/todos/todosSlice";
+import { createSelector } from "reselect";
 
 export const selectTodos = createSelector(
   (state: TApplicationState) => state,

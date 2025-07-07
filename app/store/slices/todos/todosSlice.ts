@@ -1,13 +1,14 @@
+import { DEFAULT_PAGE_SIZE } from "@/app/shared/constants";
+import { EReducerNames, TToDo } from "@/app/shared/types";
+import { ETodosQueries } from "@/app/store/api/todos/queries";
+import { todosEndpoints } from "@/app/store/api/todos/todos";
+import { TApplicationState } from "@/shared/types/redux";
+
 import {
   createEntityAdapter,
   createSlice,
   EntityState,
 } from "@reduxjs/toolkit";
-import { EReducerNames, TToDo } from "@/app/shared/types";
-import { ETodosQueries } from "@/app/store/api/todos/queries";
-import { todosEndpoints } from "@/app/store/api/todos/todos";
-import { TApplicationState } from "@/app/store/createStore";
-import { DEFAULT_PAGE_SIZE } from "@/app/shared/constants";
 
 export type TTodosState = {
   todos: EntityState<TToDo, number> & {

@@ -1,9 +1,9 @@
-import { combineReducers } from "@reduxjs/toolkit";
-import { baseApi } from "@/app/store/toolkitServices";
 import { EReducerNames } from "@/app/shared/types";
+import { baseApi } from "@/app/store/toolkitServices";
+import { combineReducers } from "@reduxjs/toolkit";
 import todosReducer from "./todos/todosSlice";
 
-const combinedReducers = {
+export const combinedReducers = {
   [EReducerNames.TODOS]: todosReducer,
   [baseApi.reducerPath]: baseApi.reducer,
 };

@@ -35,5 +35,5 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
-
+coverage/
 app-example

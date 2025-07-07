@@ -8,10 +8,10 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
+import store from "@/app/store/configureStore";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Provider } from "react-redux";
-import store from "@/app/store/createStore";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

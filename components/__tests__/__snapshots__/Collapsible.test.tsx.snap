@@ -5,7 +5,7 @@ exports[`<Collapsible /> Match snapshot 1`] = `
   style={
     [
       {
-        "backgroundColor": "#fff",
+        "backgroundColor": "#ECEFF4",
       },
       undefined,
     ]
@@ -75,8 +75,8 @@ exports[`<Collapsible /> Match snapshot 1`] = `
           ],
         ]
       }
-      tint={4285034614}
-      tintColor="#687076"
+      tint={4283192938}
+      tintColor="#4C566A"
       type="monochrome"
       weight="medium"
     />
@@ -84,7 +84,7 @@ exports[`<Collapsible /> Match snapshot 1`] = `
       style={
         [
           {
-            "color": "#11181C",
+            "color": "#2E3440",
           },
           undefined,
           undefined,
