@@ -1,4 +1,5 @@
 import { mockedTodosData, mockedUpdatedTodoData } from "@/__mocks__/mockedData";
+import { DEFAULT_PAGE_SIZE } from "@/app/shared/constants";
 import { TToDo } from "@/app/shared/types";
 import { renderWithProviders } from "@/utils/testUtils/test-utils";
 import { createEntityAdapter } from "@reduxjs/toolkit";
@@ -84,6 +85,20 @@ describe("TodoList component", () => {
     expect(mockedUpdateTodoStatusMutation).toHaveBeenCalledWith({
       id: mockedUpdatedTodoData.id,
       completed: !changedTodo?.completed,
+    });
+  });
+  test("will trigger pagination when reaching end of list", () => {
+    const { getByTestId } = renderWithProviders(<TodosList />, {
+      preloadedState,
+    });
+
+    const flatList = getByTestId(todosListTestIds.flatList.testID);
+    // simulate reaching the end of the list
+    fireEvent(flatList, "onEndReached");
+
+    expect(mockedGetTodosQuery).toHaveBeenCalledWith({
+      limit: DEFAULT_PAGE_SIZE,
+      skip: DEFAULT_PAGE_SIZE,
     });
   });
 });

@@ -64,6 +64,8 @@ export const TodosList = () => {
   }, [fetchTodos]);
 
   const onEndReached = useCallback(() => {
+    console.log("🚀 -> onEndReached->");
+
     if (!isLoading && !isReachEndOfList) {
       getTodos({
         limit: DEFAULT_PAGE_SIZE,
