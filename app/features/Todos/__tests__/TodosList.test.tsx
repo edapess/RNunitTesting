@@ -1,19 +1,31 @@
-import { mockedTodosData } from "@/__mocks__/mockedData";
-import { selectTodos } from "@/app/store/slices/todos/selectors";
+import { mockedTodosData, mockedUpdatedTodoData } from "@/__mocks__/mockedData";
+import { TToDo } from "@/app/shared/types";
 import { renderWithProviders } from "@/utils/testUtils/test-utils";
+import { createEntityAdapter } from "@reduxjs/toolkit";
+import { fireEvent } from "@testing-library/react-native";
 import { TodosList, todosListTestIds } from "../TodosList";
 
-jest.mock("expo-device", () => ({
-  deviceId: "mocked-device-id",
-}));
+// Create entity adapter to set up proper initial state
+const todosAdapter = createEntityAdapter<TToDo>();
 
-jest.mock("@/app/store/slices/todos/selectors", () => ({
-  selectTodos: jest.fn(),
-  selectTodosOffset: jest.fn(() => 0),
-  selectTodosIsReachEndOfList: jest.fn(() => false),
-}));
+// Create initial state with mocked todos data
+const initialTodosState = {
+  todos: todosAdapter.setAll(
+    todosAdapter.getInitialState({
+      offset: 0,
+      totalElements: mockedTodosData.total,
+      isReachEndOfList: false,
+    }),
+    mockedTodosData.todos,
+  ),
+};
+
+const preloadedState = {
+  todos: initialTodosState,
+};
 
 const mockedGetTodosQuery = jest.fn();
+const mockedUpdateTodoStatusMutation = jest.fn();
 
 jest.mock("@/app/store/api/todos/todos", () => ({
   useLazyGetTodosQuery: () => [
@@ -25,8 +37,22 @@ jest.mock("@/app/store/api/todos/todos", () => ({
       isError: false,
     },
   ],
+  useUpdateTodoStatusMutation: () => [
+    mockedUpdateTodoStatusMutation,
+    {
+      data: mockedUpdatedTodoData,
+      isLoading: false,
+      isSuccess: true,
+      isError: false,
+    },
+  ],
   todosEndpoints: {
     getTodos: {
+      matchFulfilled: jest.fn(),
+      matchPending: jest.fn(),
+      matchRejected: jest.fn(),
+    },
+    updateTodoStatus: {
       matchFulfilled: jest.fn(),
       matchPending: jest.fn(),
       matchRejected: jest.fn(),
@@ -35,12 +61,29 @@ jest.mock("@/app/store/api/todos/todos", () => ({
 }));
 
 describe("TodoList component", () => {
-  beforeEach(() => {
-    jest.mocked(selectTodos).mockReturnValue(mockedTodosData.todos);
+  test("renders correctly", () => {
+    const { getByTestId } = renderWithProviders(<TodosList />, {
+      preloadedState,
+    });
+    expect(getByTestId(todosListTestIds.flatList.testID)).toBeTruthy();
   });
 
-  test("renders correctly", () => {
-    const { getByTestId } = renderWithProviders(<TodosList />);
-    expect(getByTestId(todosListTestIds.flatList.testID)).toBeTruthy();
+  test("updates todo status on checkbox press", () => {
+    const { getByTestId } = renderWithProviders(<TodosList />, {
+      preloadedState,
+    });
+    const updatingCheckBoxItem = getByTestId(
+      `${todosListTestIds.listItem.testID}-${mockedUpdatedTodoData.id}`,
+    );
+    const changedTodo = mockedTodosData.todos.find(
+      (todo) => todo.id === mockedUpdatedTodoData.id,
+    );
+    //simulate checkbox press
+    fireEvent.press(updatingCheckBoxItem);
+    //checking if the updateTodoStatus mutation was called with correct parameters
+    expect(mockedUpdateTodoStatusMutation).toHaveBeenCalledWith({
+      id: mockedUpdatedTodoData.id,
+      completed: !changedTodo?.completed,
+    });
   });
 });

@@ -18,6 +18,7 @@ export function setupStore(preloadedState?: Partial<RootState>) {
         serializableCheck: false,
       }).concat(baseApi.middleware),
     enhancers: (getDefaultEnhancers) => getDefaultEnhancers().concat(enhancers),
+    preloadedState,
   });
 }
 const store = setupStore();

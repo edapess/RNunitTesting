@@ -1,6 +1,7 @@
-import { baseApi } from "@/app/store/toolkitServices";
+import { TToDo } from "@/app/shared/types";
 import { ETodosQueries } from "@/app/store/api/todos/queries";
 import { TTodosRequest, TTodosResponse } from "@/app/store/api/todos/types";
+import { baseApi } from "@/app/store/toolkitServices";
 
 const todosApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -11,7 +12,24 @@ const todosApi = baseApi.injectEndpoints({
         params,
       }),
     }),
+    [ETodosQueries.UPDATE_TODO_STATUS]: builder.mutation<
+      TToDo,
+      {
+        id: number;
+        completed: boolean;
+      }
+    >({
+      query: ({ id, completed }) => ({
+        url: `todos/${id}`,
+        method: "PUT",
+        data: { completed },
+      }),
+    }),
   }),
 });
 
-export const { useLazyGetTodosQuery, endpoints: todosEndpoints } = todosApi;
+export const {
+  useLazyGetTodosQuery,
+  useUpdateTodoStatusMutation,
+  endpoints: todosEndpoints,
+} = todosApi;

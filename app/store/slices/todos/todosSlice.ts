@@ -48,6 +48,15 @@ const todosSlice = createSlice({
         }
       },
     );
+    builder.addMatcher(
+      todosEndpoints[ETodosQueries.UPDATE_TODO_STATUS].matchFulfilled,
+      (state, { payload }) => {
+        todosAdapter.updateOne(state.todos, {
+          id: payload.id,
+          changes: { completed: payload.completed },
+        });
+      },
+    );
   },
 });
 

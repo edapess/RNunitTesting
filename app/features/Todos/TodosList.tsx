@@ -1,6 +1,9 @@
 import { DEFAULT_PAGE_SIZE } from "@/app/shared/constants";
 import { TToDo } from "@/app/shared/types";
-import { useLazyGetTodosQuery } from "@/app/store/api/todos/todos";
+import {
+  useLazyGetTodosQuery,
+  useUpdateTodoStatusMutation,
+} from "@/app/store/api/todos/todos";
 import {
   selectTodos,
   selectTodosIsReachEndOfList,
@@ -22,22 +25,32 @@ export const todosListTestIds = createTestIDsObject(
 
 export const TodosList = () => {
   const [getTodos, { isLoading }] = useLazyGetTodosQuery();
+  const [updateTodoStatus] = useUpdateTodoStatusMutation();
 
   const todosData = useAppSelector(selectTodos);
   const todosOffset = useAppSelector(selectTodosOffset);
   const isReachEndOfList = useAppSelector(selectTodosIsReachEndOfList);
 
-  const renderItem = useCallback(({ item }: { item: TToDo }) => {
-    return (
-      <Checkboxed
-        testID={`${todosListTestIds.listItem.testID}-${item.id}`}
-        content={item.todo}
-        key={item.id}
-        onPress={() => {}}
-        selected={item.completed}
-      />
-    );
-  }, []);
+  const updateTodo = useCallback(
+    (id: number, completed: boolean) => {
+      updateTodoStatus({ id, completed });
+    },
+    [updateTodoStatus],
+  );
+  const renderItem = useCallback(
+    ({ item }: { item: TToDo }) => {
+      return (
+        <Checkboxed
+          testID={`${todosListTestIds.listItem.testID}-${item.id}`}
+          content={item.todo}
+          key={item.id}
+          onPress={() => updateTodo(item.id, !item.completed)}
+          selected={item.completed}
+        />
+      );
+    },
+    [updateTodo],
+  );
 
   const fetchTodos = useCallback(() => {
     getTodos({

@@ -17,7 +17,6 @@ export const Checkboxed: FC<TCheckboxed> = ({
   onPress,
   testID,
 }) => {
-  console.log("🚀 -> testID->", testID);
   const styles = useCheckboxedStyles();
   return (
     <ThemedView style={styles.container}>
