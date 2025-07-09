@@ -18,11 +18,14 @@ export const Checkboxed: FC<TCheckboxed> = ({
   testID,
 }) => {
   const styles = useCheckboxedStyles();
+
   return (
     <ThemedView style={styles.container}>
       <Pressable testID={testID} onPress={onPress} style={styles.pressable}>
         <View style={[styles.checkBox, selected && styles.selectedCheckbox]} />
-        <ThemedText style={styles.content}>{content}</ThemedText>
+        <ThemedText numberOfLines={3} style={styles.content}>
+          {content}
+        </ThemedText>
       </Pressable>
     </ThemedView>
   );

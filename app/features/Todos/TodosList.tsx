@@ -78,6 +78,7 @@ export const TodosList = () => {
       data={todosData}
       contentContainerStyle={{
         rowGap: 16,
+        padding: 16,
       }}
       refreshControl={
         <RefreshControl refreshing={isLoading} onRefresh={fetchTodos} />

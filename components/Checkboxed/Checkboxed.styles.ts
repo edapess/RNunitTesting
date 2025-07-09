@@ -1,12 +1,13 @@
+import { useUiTheme } from "@/utils/uiUtils/themeUtils";
 import { StyleSheet } from "react-native";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { Colors, useColors } from "@/constants/Colors";
 
 export const useCheckboxedStyles = () => {
-  const colors = useColors();
+  const colors = useUiTheme();
   return StyleSheet.create({
     container: {
       padding: 16,
+      backgroundColor: colors.secondary,
+      borderRadius: 8,
     },
     checkBox: {
       borderWidth: 1,
@@ -21,6 +22,7 @@ export const useCheckboxedStyles = () => {
       flexDirection: "row",
       alignItems: "center",
       columnGap: 16,
+      width: "80%",
     },
     content: {
       color: colors.text,
