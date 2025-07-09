@@ -1,15 +1,12 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { EStorageKeys } from "@/constants/mmkvConstants";
-
 import {
   createParentTestIDObjectKeys,
   createTestIDsObject,
 } from "@/utils/createTestIDs";
-import { useIsDark } from "@/utils/uiUtils/themeUtils";
-import { useAsyncStorage } from "@react-native-async-storage/async-storage";
+import { useIsDark, useThemeContext } from "@/utils/uiUtils/themeUtils";
 import { useCallback } from "react";
-import { Appearance, Switch, View } from "react-native";
+import { Switch, View } from "react-native";
 import { useSettingsScreenStyles } from "./styles";
 
 export const settingsScreenTestIds = createTestIDsObject(
@@ -24,13 +21,16 @@ export const settingsScreenTestIds = createTestIDsObject(
 
 export default function SettingsScreen() {
   const isDark = useIsDark();
+  const { setTheme } = useThemeContext();
   const { container, switchContainer } = useSettingsScreenStyles();
-  const { setItem } = useAsyncStorage(EStorageKeys.appearance);
 
-  const onChangeTheme = useCallback(() => {
-    Appearance.setColorScheme(isDark ? "light" : "dark");
-    setItem(isDark ? "light" : "dark");
-  }, [isDark, setItem]);
+  const onChangeTheme = useCallback(
+    (value: boolean) => {
+      const newTheme = value ? "dark" : "light";
+      setTheme(newTheme);
+    },
+    [setTheme],
+  );
 
   return (
     <ThemedView
@@ -46,7 +46,7 @@ export default function SettingsScreen() {
         >{`Turn ${isDark ? "Off" : "On"} Dark mode`}</ThemedText>
         <Switch
           testID={settingsScreenTestIds.switch.testID}
-          onChange={onChangeTheme}
+          onValueChange={onChangeTheme}
           value={isDark}
         />
       </View>

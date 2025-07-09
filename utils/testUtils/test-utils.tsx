@@ -1,5 +1,6 @@
 import { RootState, setupStore } from "@/app/store/configureStore";
 import { AppStore } from "@/shared/types/redux";
+import { ThemeProvider } from "@/utils/uiUtils/themeUtils";
 import {
   Action,
   combineReducers,
@@ -25,8 +26,12 @@ export function renderWithProviders(
     ...renderOptions
   }: ExtendedRenderOptions = {},
 ) {
-  function Wrapper({ children }: PropsWithChildren<{}>): JSX.Element {
-    return <Provider store={store}>{children}</Provider>;
+  function Wrapper({ children }: PropsWithChildren): JSX.Element {
+    return (
+      <Provider store={store}>
+        <ThemeProvider>{children}</ThemeProvider>
+      </Provider>
+    );
   }
   return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
 }

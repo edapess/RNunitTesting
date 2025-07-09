@@ -3,7 +3,7 @@ import { DEFAULT_PAGE_SIZE } from "@/app/shared/constants";
 import { TToDo } from "@/app/shared/types";
 import { renderWithProviders } from "@/utils/testUtils/test-utils";
 import { createEntityAdapter } from "@reduxjs/toolkit";
-import { fireEvent } from "@testing-library/react-native";
+import { fireEvent, waitFor } from "@testing-library/react-native";
 import { TodosList, todosListTestIds } from "../TodosList";
 
 // Create entity adapter to set up proper initial state
@@ -62,14 +62,16 @@ jest.mock("@/app/store/api/todos/todos", () => ({
 }));
 
 describe("TodoList component", () => {
-  test("renders correctly", () => {
+  test("renders correctly", async () => {
     const { getByTestId } = renderWithProviders(<TodosList />, {
       preloadedState,
     });
-    expect(getByTestId(todosListTestIds.flatList.testID)).toBeTruthy();
+    await waitFor(() => {
+      expect(getByTestId(todosListTestIds.flatList.testID)).toBeTruthy();
+    });
   });
 
-  test("updates todo status on checkbox press", () => {
+  test("updates todo status on checkbox press", async () => {
     const { getByTestId } = renderWithProviders(<TodosList />, {
       preloadedState,
     });
@@ -82,12 +84,14 @@ describe("TodoList component", () => {
     //simulate checkbox press
     fireEvent.press(updatingCheckBoxItem);
     //checking if the updateTodoStatus mutation was called with correct parameters
-    expect(mockedUpdateTodoStatusMutation).toHaveBeenCalledWith({
-      id: mockedUpdatedTodoData.id,
-      completed: !changedTodo?.completed,
+    await waitFor(() => {
+      expect(mockedUpdateTodoStatusMutation).toHaveBeenCalledWith({
+        id: mockedUpdatedTodoData.id,
+        completed: !changedTodo?.completed,
+      });
     });
   });
-  test("will trigger pagination when reaching end of list", () => {
+  test("will trigger pagination when reaching end of list", async () => {
     const { getByTestId } = renderWithProviders(<TodosList />, {
       preloadedState,
     });
@@ -95,10 +99,11 @@ describe("TodoList component", () => {
     const flatList = getByTestId(todosListTestIds.flatList.testID);
     // simulate reaching the end of the list
     fireEvent(flatList, "onEndReached");
-
-    expect(mockedGetTodosQuery).toHaveBeenCalledWith({
-      limit: DEFAULT_PAGE_SIZE,
-      skip: DEFAULT_PAGE_SIZE,
+    await waitFor(() => {
+      expect(mockedGetTodosQuery).toHaveBeenCalledWith({
+        limit: DEFAULT_PAGE_SIZE,
+        skip: DEFAULT_PAGE_SIZE,
+      });
     });
   });
 });

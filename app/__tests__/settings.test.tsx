@@ -20,37 +20,68 @@ describe("Settings screen", () => {
     mockUseColorScheme.mockReturnValue("light");
   });
 
-  it("renders correctly", () => {
+  it("renders correctly", async () => {
     const { getByTestId } = renderWithProviders(<SettingsScreen />);
-    expect(getByTestId(settingsScreenTestIds.container.testID)).toBeTruthy();
+    await waitFor(() => {
+      expect(getByTestId(settingsScreenTestIds.container.testID)).toBeTruthy();
+    });
   });
 
   it("displays correct switch state and updates AsyncStorage when toggled", async () => {
-    const { getByTestId, rerender } = renderWithProviders(<SettingsScreen />);
+    // First test with no stored preference (should default to light)
+    const { getByTestId } = renderWithProviders(<SettingsScreen />);
     const switchComponent = getByTestId(settingsScreenTestIds.switch.testID);
     const textComponent = getByTestId(settingsScreenTestIds.text.testID);
-    //initial state should be false (light mode) and text should indicate turning on dark mode
-    expect(switchComponent.props.value).toBe(false);
-    expect(textComponent.props.children).toBe("Turn On Dark mode");
-    // simulate that user has previously set dark mode preference
-    await AsyncStorage.setItem(EStorageKeys.appearance, "dark");
 
-    // Re-render to trigger the useEffect in useIsDark hook that reads from AsyncStorage
-    rerender(<SettingsScreen />);
+    // Wait for initial load to complete
+    await waitFor(() => {
+      expect(switchComponent.props.value).toBe(false);
+      expect(textComponent.props.children).toBe("Turn On Dark mode");
+    });
 
-    // wait for the component to update with the dark theme preference
+    // Test toggling to dark mode
+    fireEvent(switchComponent, "onValueChange", true);
+
+    // Wait for the update to take effect
     await waitFor(() => {
       expect(switchComponent.props.value).toBe(true);
       expect(textComponent.props.children).toBe("Turn Off Dark mode");
     });
 
-    // test the toggle functionality - switch back to light mode
-    fireEvent(switchComponent, "onChange", { nativeEvent: { value: false } });
+    // Verify that AsyncStorage was updated to dark mode
+    await waitFor(async () => {
+      const storedValue = await AsyncStorage.getItem(EStorageKeys.appearance);
+      expect(storedValue).toBe("dark");
+    });
 
-    // verify that AsyncStorage was updated to light mode
+    // Test toggling back to light mode
+    fireEvent(switchComponent, "onValueChange", false);
+
+    // Wait for the update to take effect
+    await waitFor(() => {
+      expect(switchComponent.props.value).toBe(false);
+      expect(textComponent.props.children).toBe("Turn On Dark mode");
+    });
+
+    // Verify that AsyncStorage was updated to light mode
     await waitFor(async () => {
       const storedValue = await AsyncStorage.getItem(EStorageKeys.appearance);
       expect(storedValue).toBe("light");
+    });
+  });
+
+  it("loads existing dark mode preference from AsyncStorage", async () => {
+    // Set dark mode preference before rendering
+    await AsyncStorage.setItem(EStorageKeys.appearance, "dark");
+
+    const { getByTestId } = renderWithProviders(<SettingsScreen />);
+    const switchComponent = getByTestId(settingsScreenTestIds.switch.testID);
+    const textComponent = getByTestId(settingsScreenTestIds.text.testID);
+
+    // Wait for the component to load the stored preference
+    await waitFor(() => {
+      expect(switchComponent.props.value).toBe(true);
+      expect(textComponent.props.children).toBe("Turn Off Dark mode");
     });
   });
 });

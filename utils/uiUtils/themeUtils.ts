@@ -1,8 +1,77 @@
 import { Colors } from "@/constants/Colors";
 import { EStorageKeys } from "@/constants/mmkvConstants";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Appearance, ColorSchemeName, useColorScheme } from "react-native";
+
+// Theme Context
+interface ThemeContextType {
+  isDark: boolean;
+  appearance: string | null;
+  isLoading: boolean;
+  setTheme: (theme: "dark" | "light") => void;
+}
+
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+  const colorScheme = useColorScheme();
+  const { getItem, setItem } = useAsyncStorage(EStorageKeys.appearance);
+  const [appearance, setAppearance] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadAppearance = async () => {
+      try {
+        const value = await getItem();
+        setAppearance(value);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching appearance:", error);
+        setIsLoading(false);
+      }
+    };
+
+    loadAppearance();
+  }, [getItem]);
+
+  const setTheme = async (theme: "dark" | "light") => {
+    try {
+      await setItem(theme);
+      setAppearance(theme);
+      Appearance.setColorScheme(theme);
+    } catch (error) {
+      console.error("Error setting theme:", error);
+    }
+  };
+
+  const isDark = isLoading
+    ? colorScheme === "dark"
+    : appearance !== null
+      ? appearance === "dark"
+      : colorScheme === "dark";
+
+  return React.createElement(
+    ThemeContext.Provider,
+    { value: { isDark, appearance, isLoading, setTheme } },
+    children,
+  );
+};
+
+// Custom hook to use theme context
+export const useThemeContext = () => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error("useThemeContext must be used within a ThemeProvider");
+  }
+  return context;
+};
 
 export const useColors = () => {
   const colorScheme = useColorScheme() || "light";
@@ -20,27 +89,18 @@ export const uiTheme = (theme?: ColorSchemeName | string) => {
 };
 
 export const useUiTheme = (forceMode?: ColorSchemeName) => {
+  const { appearance, isLoading } = useThemeContext();
   const colorScheme = useColorScheme();
-  const { getItem } = useAsyncStorage(EStorageKeys.appearance);
-  const [appearance, setAppearance] = useState<string | null>(null);
 
-  useEffect(() => {
-    getItem().then((value) => setAppearance(value || null));
-  }, [getItem]);
+  if (isLoading) {
+    return uiTheme(forceMode || colorScheme);
+  }
 
-  return uiTheme(forceMode || appearance || colorScheme);
+  const currentTheme = forceMode || appearance || colorScheme;
+  return uiTheme(currentTheme);
 };
 
 export const useIsDark = () => {
-  const colorScheme = useColorScheme();
-  console.log("🚀 -> colorScheme->", colorScheme);
-  const { getItem } = useAsyncStorage(EStorageKeys.appearance);
-  const [appearance, setAppearance] = useState<string | null>(null);
-  console.log("🚀 -> appearance->", appearance);
-
-  useEffect(() => {
-    getItem().then((value) => setAppearance(value || null));
-  }, [getItem]);
-
-  return (appearance || colorScheme) === "dark";
+  const { isDark } = useThemeContext();
+  return isDark;
 };

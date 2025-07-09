@@ -3,7 +3,6 @@ import React from "react";
 
 import { HapticTab } from "@/components/HapticTab";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import TabBarBackground from "@/components/ui/TabBarBackground";
 import { useUiTheme } from "@/utils/uiUtils/themeUtils";
 
 export default function TabLayout() {
@@ -15,10 +14,10 @@ export default function TabLayout() {
         tabBarActiveTintColor: colors.tint,
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
         tabBarStyle: {
-          backgroundColor: colors.secondary,
+          backgroundColor: colors.card,
           position: "absolute",
+          paddingTop: 16,
         },
       }}
     >
