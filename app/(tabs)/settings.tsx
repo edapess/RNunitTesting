@@ -1,5 +1,8 @@
+import { AnimatedPieChart } from "@/components/AnimatedDonutChart/AnimatedPieChart";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { useGeneratePieChartData } from "@/hooks/useGeneratePieChartData";
+import { useAppSelector } from "@/hooks/useRedux";
 import {
   createParentTestIDObjectKeys,
   createTestIDsObject,
@@ -7,6 +10,7 @@ import {
 import { useIsDark, useThemeContext } from "@/utils/uiUtils/themeUtils";
 import { useCallback } from "react";
 import { Switch, View } from "react-native";
+import { selectTodos } from "../store/slices/todos/selectors";
 import { useSettingsScreenStyles } from "./styles";
 
 export const settingsScreenTestIds = createTestIDsObject(
@@ -23,7 +27,8 @@ export default function SettingsScreen() {
   const isDark = useIsDark();
   const { setTheme } = useThemeContext();
   const { container, switchContainer } = useSettingsScreenStyles();
-
+  const todos = useAppSelector(selectTodos);
+  const pieChartData = useGeneratePieChartData(todos);
   const onChangeTheme = useCallback(
     (value: boolean) => {
       const newTheme = value ? "dark" : "light";
@@ -50,6 +55,7 @@ export default function SettingsScreen() {
           value={isDark}
         />
       </View>
+      <AnimatedPieChart data={pieChartData} />
     </ThemedView>
   );
 }

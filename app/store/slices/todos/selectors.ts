@@ -1,8 +1,8 @@
+import { TApplicationState } from "@/app/shared/types/redux";
 import {
   todosSelectors,
   TTodosState,
 } from "@/app/store/slices/todos/todosSlice";
-import { TApplicationState } from "@/shared/types/redux";
 import { createSelector } from "reselect";
 
 export const selectTodos = createSelector(

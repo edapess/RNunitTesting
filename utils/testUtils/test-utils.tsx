@@ -1,5 +1,5 @@
+import { AppStore } from "@/app/shared/types/redux";
 import { RootState, setupStore } from "@/app/store/configureStore";
-import { AppStore } from "@/shared/types/redux";
 import { ThemeProvider } from "@/utils/uiUtils/themeUtils";
 import {
   Action,

@@ -1,8 +1,8 @@
 import { DEFAULT_PAGE_SIZE } from "@/app/shared/constants";
 import { EReducerNames, TToDo } from "@/app/shared/types";
+import { TApplicationState } from "@/app/shared/types/redux";
 import { ETodosQueries } from "@/app/store/api/todos/queries";
 import { todosEndpoints } from "@/app/store/api/todos/todos";
-import { TApplicationState } from "@/shared/types/redux";
 
 import {
   createEntityAdapter,
