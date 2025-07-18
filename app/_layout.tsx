@@ -12,10 +12,15 @@ import { useEffect } from "react";
 import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
+import { initRemoteLogger } from "./store/setupLogger";
+
+initRemoteLogger("ws://localhost:7878");
 
 function AppContent() {
   const colors = useUiTheme();
   const isDark = useIsDark();
+  console.log("🚀 -> AppContent -> isDark->", isDark);
+
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
