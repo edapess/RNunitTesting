@@ -6,10 +6,10 @@ import { createEntityAdapter } from "@reduxjs/toolkit";
 import { fireEvent, waitFor } from "@testing-library/react-native";
 import { TodosList, todosListTestIds } from "../TodosList";
 
-// Create entity adapter to set up proper initial state
+// crate entity adapter to set up proper initial state
 const todosAdapter = createEntityAdapter<TToDo>();
 
-// Create initial state with mocked todos data
+// create initial state with mocked todos data
 const initialTodosState = {
   todos: todosAdapter.setAll(
     todosAdapter.getInitialState({
@@ -81,7 +81,7 @@ describe("TodoList component", () => {
     const changedTodo = mockedTodosData.todos.find(
       (todo) => todo.id === mockedUpdatedTodoData.id,
     );
-    //simulate checkbox press
+    // simulate checkbox press
     fireEvent.press(updatingCheckBoxItem);
     //checking if the updateTodoStatus mutation was called with correct parameters
     await waitFor(() => {
