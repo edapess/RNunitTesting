@@ -22,6 +22,7 @@ export const useSettingsScreenStyles = () => {
     container: {
       flex: 1,
       padding: 16,
+      rowGap: 16,
     },
     switchContainer: {
       flexDirection: "row",
