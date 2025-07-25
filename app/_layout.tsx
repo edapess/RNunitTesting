@@ -8,11 +8,12 @@ import {
   useIsDark,
   useUiTheme,
 } from "@/utils/uiUtils/themeUtils";
+import { initRemoteLogger } from "@boltotron/boltotron-react-native";
 import { useEffect } from "react";
 import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
-
+initRemoteLogger("ws://localhost:7878");
 function AppContent() {
   const colors = useUiTheme();
   const isDark = useIsDark();
