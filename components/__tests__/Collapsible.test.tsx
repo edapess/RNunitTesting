@@ -7,13 +7,15 @@ const mockedContent = "This is the content of the collapsible section.";
 
 describe("<Collapsible />", () => {
   test("Match snapshot", async () => {
-    const { toJSON } = renderWithProviders(<Collapsible title="mock title" />);
+    const { toJSON } = await renderWithProviders(
+      <Collapsible title="mock title" />,
+    );
     await waitFor(() => {
       expect(toJSON()).toMatchSnapshot();
     });
   });
   test("Renders title correctly", async () => {
-    const { getByTestId } = renderWithProviders(
+    const { getByTestId } = await renderWithProviders(
       <Collapsible title={mockedTitle} />,
     );
     await waitFor(() => {
@@ -23,7 +25,7 @@ describe("<Collapsible />", () => {
     });
   });
   test("Toggles content visibility on heading press", async () => {
-    const { getByTestId, queryByText } = renderWithProviders(
+    const { getByTestId, queryByText } = await renderWithProviders(
       <Collapsible title={mockedTitle}>{mockedContent}</Collapsible>,
     );
     await waitFor(() => {

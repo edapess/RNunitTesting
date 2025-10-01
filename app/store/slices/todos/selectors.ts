@@ -13,6 +13,10 @@ export const selectTodos = createSelector(
 export const selectTodosState = (state: TApplicationState): TTodosState =>
   state.todos;
 
+export const selectTotalTodosCount = createSelector(
+  selectTodosState,
+  (todosState) => todosState.todos.totalElements,
+);
 export const selectTodosOffset = createSelector(
   selectTodosState,
   (todosState) => todosState.todos.offset,
@@ -21,4 +25,8 @@ export const selectTodosOffset = createSelector(
 export const selectTodosIsReachEndOfList = createSelector(
   selectTodosState,
   (todosState) => todosState.todos.isReachEndOfList,
+);
+
+export const selectCompletedTodos = createSelector(selectTodos, (todos) =>
+  todos.filter((todo) => todo.completed),
 );

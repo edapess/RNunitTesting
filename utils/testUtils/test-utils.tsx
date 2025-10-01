@@ -9,7 +9,7 @@ import {
   Middleware,
   Reducer,
 } from "@reduxjs/toolkit";
-import { render, RenderOptions } from "@testing-library/react-native";
+import { act, render, RenderOptions } from "@testing-library/react-native";
 import React, { JSX, PropsWithChildren } from "react";
 import { Provider } from "react-redux";
 
@@ -18,7 +18,7 @@ interface ExtendedRenderOptions extends Omit<RenderOptions, "queries"> {
   store?: AppStore;
 }
 
-export function renderWithProviders(
+export async function renderWithProviders(
   ui: React.ReactElement,
   {
     preloadedState = {},
@@ -33,7 +33,14 @@ export function renderWithProviders(
       </Provider>
     );
   }
-  return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
+
+  const result = render(ui, { wrapper: Wrapper, ...renderOptions });
+
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+
+  return { store, ...result };
 }
 
 export function setupApiStore<
@@ -46,8 +53,8 @@ export function setupApiStore<
   R extends Record<string, Reducer<any, any>> = Record<never, never>,
 >(api: A, extraReducers?: R): { api: any; store: EnhancedStore } {
   /*
-   * Modified version of RTK Query's helper function:
-   * https://github.com/reduxjs/redux-toolkit/blob/master/packages/toolkit/src/query/tests/helpers.tsx
+   * modified version of RTK Query's helper function:
+   * check docs for more details
    */
   const getStore = (): EnhancedStore =>
     configureStore({

@@ -63,26 +63,35 @@ jest.mock("@/app/store/api/todos/todos", () => ({
 
 describe("TodoList component", () => {
   test("renders correctly", async () => {
-    const { getByTestId } = renderWithProviders(<TodosList />, {
+    const { getByTestId } = await renderWithProviders(<TodosList />, {
       preloadedState,
     });
+
     await waitFor(() => {
       expect(getByTestId(todosListTestIds.flatList.testID)).toBeTruthy();
     });
   });
 
   test("updates todo status on checkbox press", async () => {
-    const { getByTestId } = renderWithProviders(<TodosList />, {
+    const { getByTestId } = await renderWithProviders(<TodosList />, {
       preloadedState,
     });
+
+    // Wait for component to fully render and theme to initialize
+    await waitFor(() => {
+      expect(getByTestId(todosListTestIds.flatList.testID)).toBeTruthy();
+    });
+
     const updatingCheckBoxItem = getByTestId(
       `${todosListTestIds.listItem.testID}-${mockedUpdatedTodoData.id}`,
     );
     const changedTodo = mockedTodosData.todos.find(
       (todo) => todo.id === mockedUpdatedTodoData.id,
     );
+
     // simulate checkbox press
     fireEvent.press(updatingCheckBoxItem);
+
     //checking if the updateTodoStatus mutation was called with correct parameters
     await waitFor(() => {
       expect(mockedUpdateTodoStatusMutation).toHaveBeenCalledWith({
@@ -92,13 +101,18 @@ describe("TodoList component", () => {
     });
   });
   test("will trigger pagination when reaching end of list", async () => {
-    const { getByTestId } = renderWithProviders(<TodosList />, {
+    const { getByTestId } = await renderWithProviders(<TodosList />, {
       preloadedState,
     });
 
-    const flatList = getByTestId(todosListTestIds.flatList.testID);
+    // wait for component to fully render and theme to initialize
+    const flatList = await waitFor(() =>
+      getByTestId(todosListTestIds.flatList.testID),
+    );
+
     // simulate reaching the end of the list
     fireEvent(flatList, "onEndReached");
+
     await waitFor(() => {
       expect(mockedGetTodosQuery).toHaveBeenCalledWith({
         limit: DEFAULT_PAGE_SIZE,
